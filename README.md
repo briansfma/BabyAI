@@ -4,6 +4,10 @@ Most recent AI developments have centered on generating inferences from vast amo
 
 BabyAI won't train on batches of data -- each moment it spends in its environment is the data fed back to the neural network, which then must update and serve the next output in real-time. Performant code is a must, and the network architecture itself will have to be extremely fast. This is a heavy work in progress, if the project interests you I'd be honored to receive your contact or even contribution!
 
+[//]: # (Image References)
+[image1]: vJoystick1.png "vJoy working"
+[image2]: FrameCapture1.png "Frame capture"
+
 ## Components (Dependencies)
 
 * Python 3.5+
@@ -17,5 +21,7 @@ BabyAI won't train on batches of data -- each moment it spends in its environmen
 ## Progress log
 
 * Virtual joystick controller implemented (translates discrete neural network output to continuous X/Y-axis inputs)
+![alt text][image1]
 * Fast video frame capture implemented - resizes frames down to 160x90 for now as the CNN does not need much detail
+![alt text][image2]
 * Experimenting with the NN model now
