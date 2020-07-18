@@ -7,6 +7,7 @@ BabyAI won't train on batches of data -- each moment it spends in its environmen
 [//]: # (Image References)
 [image1]: vJoystick1.png "vJoy working"
 [image2]: FrameCapture1.png "Frame capture"
+[image3]: SimpleVarTraining1.png "Training (test)"
 
 ## Components (Dependencies)
 
@@ -24,4 +25,6 @@ BabyAI won't train on batches of data -- each moment it spends in its environmen
 ![alt text][image1]
 * Fast video frame capture implemented - resizes frames down to 160x90 for now as the CNN does not need much detail
 ![alt text][image2]
-* Experimenting with the NN model now
+* Simple NN with manual backpropagation implemented, can train simple variables just fine.
+![alt text][image3]
+* Next is setting up a simplified environment and reward function for reinforcement learning of basic physics.
