@@ -21,7 +21,7 @@ class FrameGrabber:
         self.factor = self.f.display.resolution[0] // TARGET_INPUT_WIDTH
         self.offset = self.factor // 2
 
-        self.f.capture()
+        self.f.capture(target_fps=120)
         time.sleep(1)   # Pause for init time
 
     # Gets RGB screen capture and resizes it to serve to neural net.
