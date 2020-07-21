@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from numba import jit
+import time
 
 
 class SimEnviron:
@@ -117,9 +118,12 @@ sim = SimEnviron()
 STEP_COUNT = 200
 
 point_t = []
+point_steer = []
 point_h = []
 point_s = []
 point_d = []
+
+start = time.time()
 
 old_reward = 1
 for i in range(STEP_COUNT):
@@ -136,21 +140,26 @@ for i in range(STEP_COUNT):
   print('\tS: {},  \t\tHeading: {}'.format(sim.s, sim.heading))
 
   point_t.append(i + 1)
+  point_steer.append(steering)
   point_h.append(sim.heading)
   point_s.append(sim.s)
   point_d.append(sim.dist)
 
   network.train(input, error, learnrate=1)
 
+
+end = time.time()
+print("Elapsed time for calculation: {}".format(end - start))
+
+
 # Visualization
 fig, (ax1, ax2, ax3) = plt.subplots(3)
-fig.suptitle('Model Convergence')
-ax1.plot(point_t, point_h)
+ax1.plot(point_t, point_steer)
 ax1.set_xlabel('Time Step t')
-ax1.set_ylabel('Heading (rad)')
-ax2.plot(point_t, point_s)
+ax1.set_ylabel('Steering (rad)')
+ax2.plot(point_t, point_h)
 ax2.set_xlabel('Time Step t')
-ax2.set_ylabel('Side displacement s')
+ax2.set_ylabel('Heading (rad)')
 ax3.plot(point_d, point_s)
 ax3.set_xlabel('Distance d')
 ax3.set_ylabel('Side displacement s')
