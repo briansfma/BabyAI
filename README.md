@@ -7,7 +7,7 @@ BabyAI won't train on batches of data -- each moment it spends in its environmen
 [//]: # (Image References)
 [image1]: vJoystick1.png "vJoy working"
 [image2]: FrameCapture1.png "Frame capture"
-[image3]: SimpleVarTraining1.png "Training (test)"
+[image3]: Figure_1.png "Training (test)"
 
 ## Components (Dependencies)
 
@@ -25,6 +25,11 @@ BabyAI won't train on batches of data -- each moment it spends in its environmen
 ![alt text][image1]
 * Fast video frame capture implemented - resizes frames down to 160x90 for now as the CNN does not need much detail
 ![alt text][image2]
-* Simple NN with manual backpropagation implemented, can train simple variables just fine.
+* Simple NN has been implemented that learns how to drive straight in real-time, via a simple reinforcement learning
+scheme. The network makes distinct progress learning in three "stages":
+    * Initial uncontrolled oscillation (approx t=0 to t=20 in this example)
+    * Realizing allowed limits to steering angle (approx t=20 to t=50)
+    * Slowly getting the hang of maintaining a straight line (t>50).
 ![alt text][image3]
-* Next is setting up a simplified environment and reward function for reinforcement learning of basic physics.
+While this behavior likely isn't robust against perturbations or curved target paths, we will add complexity to the
+network as it becomes necessary.
