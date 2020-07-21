@@ -7,21 +7,22 @@ class SimEnviron:
   def __init__(self):
     self.heading = 0.
     self.s = 0.
-    self.old_s = 0.
 
     # self.maxspeed = 0.
-    # self.speed = 0.
-    # self.heading = 0.
-    # self.dist = 0.
-    # self.s = 0.
+    self.speed = 1
+    self.dist = 0.
 
   def reward(self, steering):
-    # Easy base case test
-    reward = 0 - steering
 
-    '''
-    TODO: The more fun model will include steering as an effector of heading and thus side displacement s
-    '''
+    # Handle steering effect on heading
+    self.heading += self.speed * steering   # Discrete approximation
+
+    # Handle net effect on car's position
+    self.s += self.speed * np.sin(self.heading)
+    self.dist += self.speed * np.cos(self.heading)
+
+    reward = self.heading*2*np.pi + self.s
+
     # # Handle throttle/brake effect on speed
     # self.speed += throttle - 0.1 * (self.speed)**2  # Approximate drag/friction
     # self.speed = np.maximum(self.speed, 0)              # Clamp min value to 0 (stopped)
@@ -106,34 +107,57 @@ class SimpleNN:
 Simple test script for Neural Network functionality
 '''
 
-# Target Value
-y = np.array(0.5)
-
-# Constant Inputs (Only for testing, for now)
-x = np.array([1, 2])
-
 # Initialize network
 network = SimpleNN()
 
 # Initialize environment
 sim = SimEnviron()
 
-point_xs = []
-point_ys = []
+# Time steps to run
+STEP_COUNT = 200
 
-for i in range(100):
+point_t = []
+point_h = []
+point_s = []
+point_d = []
+
+old_reward = 1
+for i in range(STEP_COUNT):
+  input = np.array([sim.s, sim.heading])
+
   # Calculate one gradient descent step for each weight
-  steering = network.feedforward([sim.s, sim.heading]) - 0.5  # Sigmoid output centers at y == 0.5
+  steering = network.feedforward(input) - 0.5  # Sigmoid output centers at y == 0.5
   reward = sim.reward(steering)
-  error = reward
+  error = -reward + 0.05*(reward - old_reward)
+
+  old_reward = reward
 
   print('N{}: Steering: {}, \tReward: {}, \tError: {}'.format(i + 1, steering, reward, error))
   print('\tS: {},  \t\tHeading: {}'.format(sim.s, sim.heading))
 
-  point_xs.append(i + 1)
-  point_ys.append(steering)
+  point_t.append(i + 1)
+  point_h.append(sim.heading)
+  point_s.append(sim.s)
+  point_d.append(sim.dist)
 
-  network.train(x, error, learnrate=1)
+  network.train(input, error, learnrate=1)
 
-plt.plot(point_xs, point_ys)
+# Visualization
+fig, (ax1, ax2, ax3) = plt.subplots(3)
+fig.suptitle('Model Convergence')
+ax1.plot(point_t, point_h)
+ax1.set_xlabel('Time Step t')
+ax1.set_ylabel('Heading (rad)')
+ax2.plot(point_t, point_s)
+ax2.set_xlabel('Time Step t')
+ax2.set_ylabel('Side displacement s')
+ax3.plot(point_d, point_s)
+ax3.set_xlabel('Distance d')
+ax3.set_ylabel('Side displacement s')
 plt.show()
+
+# After plots show good, print/save weights and biases
+print("\nFinal Network Weights and Biases")
+print("H1: \n\tWeights: {}  \tBias: {}".format(network.h1.weights, network.h1.bias))
+print("H2: \n\tWeights: {}  \tBias: {}".format(network.h2.weights, network.h2.bias))
+print("Output: \n\tWeights: {}  \tBias: {}".format(network.out.weights, network.out.bias))
